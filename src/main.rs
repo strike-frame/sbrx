@@ -1678,6 +1678,15 @@ fn main() {
                 MouseButton::Right => mouse_rmb_pressed = false,
                 _ => {}
             }
+        }	
+
+        // Global safety cleanup: Stop CPU racer bike sounds if not actively playing
+        if !matches!(game_state, GameState::Playing) {
+            for cr in &mut cpu_racers {
+                if let Some(sink) = cr.bike_sound_sink.take() {
+                    sink.stop();
+                }
+            }
         }		
 		
         // This block now handles the blocking load AFTER the loading screen has been rendered.
@@ -4157,16 +4166,24 @@ fn main() {
                     fixed_crater.y = fighter.y;
                     stars.iter_mut().for_each(|s| s.update(dt));
 					
-                    // Unconditional update of racer states and sound-stopping checks
-                    for cr in &mut cpu_racers {
-                        let in_rut_zone = collision_barrier_manager.check_rut(
-                            &sbrx_map_system.current_field_id,
-                            cr.x,
-                            cr.y,
-                        );
-                        let rut_mult = if in_rut_zone { 0.85 } else { 1.0 };
-                        let is_on_rt = sbrx_map_system.current_field_id == SbrxFieldId(0, 0);
-                        cr.update(dt, rut_mult, fighter.x, fighter.y, &audio_manager, is_on_rt);
+                    if sbrx_map_system.current_field_id == SbrxFieldId(0, 0) {
+                        for cr in &mut cpu_racers {
+                            let in_rut_zone = collision_barrier_manager.check_rut(
+                                &sbrx_map_system.current_field_id,
+                                cr.x,
+                                cr.y,
+                            );
+                            let rut_mult = if in_rut_zone { 0.85 } else { 1.0 };
+                            let is_on_rt = sbrx_map_system.current_field_id == SbrxFieldId(0, 0) && !is_paused;
+                            cr.update(dt, rut_mult, fighter.x, fighter.y, &audio_manager, is_on_rt);
+                        }
+                    } else {
+                        // Explicitly deactivate/silence CPU racers when player leaves the racetrack
+                        for cr in &mut cpu_racers {
+                            if let Some(sink) = cr.bike_sound_sink.take() {
+                                sink.stop();
+                            }
+                        }
                     }
 
                     // Keep player collision, damage, and attack triggers locked to field x0y0
