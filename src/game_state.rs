@@ -25,7 +25,7 @@ pub enum DeathType {
     Meteorite,
     GiantMantis,
     Rattlesnake,
-    GiantRattlesnake,
+    DeadlyHornet,
     BloodIdol,
     VoidTempest,
     Raptor,

@@ -35,7 +35,7 @@ pub enum CpuVariant {
     GiantMantis,
     BloodIdol,
     Rattlesnake,
-    GiantRattlesnake, // New CPU variant
+    DeadlyHornet, // New CPU variant
     Raptor,
     TRex,
     VoidTempest,
@@ -273,15 +273,15 @@ impl CpuEntity {
         }
     }
 
-    // Constructor for GiantRattlesnake
-    pub fn new_giant_rattlesnake(line_y: f64) -> Self {
+    // Constructor for DeadlyHornet
+    pub fn new_deadly_hornet(line_y: f64) -> Self {
         Self {
-            x: safe_gen_range(50.0, 1870.0, "CpuEntity x (GiantRattlesnake)"),
-            y: safe_gen_range(line_y, line_y + 400.0, "CpuEntity y (GiantRattlesnake)"),
-            speed: 100.0,
+            x: safe_gen_range(50.0, 1870.0, "CpuEntity x (DeadlyHornet)"),
+            y: safe_gen_range(line_y, line_y + 400.0, "CpuEntity y (DeadlyHornet)"),
+            speed: 185.0,
             size: 50.0, // Assuming slightly larger size, can be adjusted
             facing_left: false,
-            current_hp: 650.0,
+            current_hp: 500.0,
             max_hp: 650.0,
             knockback_velocity: Vec2d::new(0.0, 0.0),
             knockback_duration: 0.0,
@@ -293,7 +293,7 @@ impl CpuEntity {
             frame_duration: 0.1, // Standard attack frame duration
             sound_effect_timer: 0.0,
             damage_value: 25.0,
-            variant: CpuVariant::GiantRattlesnake,
+            variant: CpuVariant::DeadlyHornet,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
             bleed_effect: None,
@@ -404,7 +404,7 @@ impl CpuEntity {
                 base_mantis_speed_for_spirit_calc,
             ),
             CpuVariant::Rattlesnake => Self::new_rattlesnake(line_y),
-            CpuVariant::GiantRattlesnake => Self::new_giant_rattlesnake(line_y),
+            CpuVariant::DeadlyHornet => Self::new_deadly_hornet(line_y),
             CpuVariant::Raptor => Self::new_raptor(
                 safe_gen_range(MIN_X, MAX_X, "Raptor x"),
                 safe_gen_range(line_y, MAX_Y, "Raptor y"),
@@ -577,7 +577,7 @@ impl CpuEntity {
                         CpuVariant::GiantMantis => "mantis_attack",
                         CpuVariant::BloodIdol => "mantis_attack",
                         CpuVariant::Rattlesnake => "mantis_attack", // Placeholder, add "rattlesnake_attack"
-                        CpuVariant::GiantRattlesnake => "mantis_attack", // Placeholder, add "giant_rattlesnake_attack"
+                        CpuVariant::DeadlyHornet => "mantis_attack", // Placeholder, add "deadly_hornet_attack"
                         CpuVariant::Raptor => "mantis_attack",
                         CpuVariant::TRex => "mantis_attack",
                         CpuVariant::VoidTempest => "mantis_attack",

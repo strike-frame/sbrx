@@ -838,7 +838,7 @@ fn main() {
             // stage 1 enemies
             0 => CpuEntity::new_giant_mantis(line_y),
             1 => CpuEntity::new_rattlesnake(line_y),
-            2 => CpuEntity::new_giant_rattlesnake(line_y),
+            2 => CpuEntity::new_deadly_hornet(line_y),
             3 => {
                 let (base_hp, base_speed) = (250.0, 150.0);
                 CpuEntity::new_blood_idol(line_y, base_hp, base_speed)
@@ -1307,8 +1307,8 @@ fn main() {
         load_cpu_textures(&mut texture_context, &sbrx_assets_path, "blood_idol");
     let rattlesnake_cpu_textures =
         load_cpu_textures(&mut texture_context, &sbrx_assets_path, "rattlesnake");
-    let giant_rattlesnake_cpu_textures =
-        load_cpu_textures(&mut texture_context, &sbrx_assets_path, "giant_rattlesnake");
+    let deadly_hornet_cpu_textures =
+        load_cpu_textures(&mut texture_context, &sbrx_assets_path, "deadly_hornet");
     let raptor_cpu_textures = load_cpu_textures(&mut texture_context, &sbrx_assets_path, "raptor");
     let t_rex_cpu_textures = load_cpu_textures(&mut texture_context, &sbrx_assets_path, "t-rex");
     let void_tempest_cpu_textures =
@@ -1551,7 +1551,7 @@ fn main() {
     let mut last_field_id_for_rattlesnake_spawn: Option<SbrxFieldId> = None;
     let mut bike_accelerate_anim_timer = 0.0;
     
-    let mut spawned_giant_rattlesnake_scores: HashSet<u32> = HashSet::new();
+    let mut spawned_deadly_hornet_scores: HashSet<u32> = HashSet::new();
     let mut fighter_jet_instance: Option<FighterJet> = None;
     let mut fighter_jet_current_sbrx_location: SbrxFieldId = SbrxFieldId(-2, 5);
 
@@ -2046,7 +2046,7 @@ fn main() {
                     }					
 					
                     last_field_id_for_rattlesnake_spawn = Some(sbrx_map_system.current_field_id);
-                    spawned_giant_rattlesnake_scores.clear();
+                    spawned_deadly_hornet_scores.clear();
                     spawned_blood_idol_scores.clear();
                     fighter_jet_current_sbrx_location = SbrxFieldId(-2, 5);
                     fort_silo_gravity_message_shown = false;
@@ -4973,18 +4973,18 @@ fn main() {
                         let current_score = fighter.score;
                         let mut score_tier_to_check = 5;
                         while score_tier_to_check <= current_score {
-                            if !spawned_giant_rattlesnake_scores.contains(&score_tier_to_check) {
-                                // Do not spawn score-based Giant Rattlesnakes in certain areas.
+                            if !spawned_deadly_hornet_scores.contains(&score_tier_to_check) {
+                                // Do not spawn score-based DEADLY HORNETs in certain areas.
                                 if current_area.is_none()
                                     && sbrx_map_system.current_field_id != SbrxFieldId(-2, 5)
 									&& sbrx_map_system.current_field_id != SbrxFieldId(-25, 25)
                                 {
                                     println!(
-                                        "Spawning Giant Rattlesnake for score tier {}.",
+                                        "Spawning DEADLY HORNET for score tier {}.",
                                         score_tier_to_check
                                     );
                                     if cpu_entities.len() < 10 {
-                                        let mut cpu = CpuEntity::new_giant_rattlesnake(line_y);
+                                        let mut cpu = CpuEntity::new_deadly_hornet(line_y);
                                         let aptitude = get_field_aptitude(sbrx_map_system.current_field_id);
                                         cpu.max_hp *= aptitude;
                                         cpu.current_hp = cpu.max_hp;
@@ -4993,7 +4993,7 @@ fn main() {
                                         cpu_entities.push(cpu);
                                     }
                                 }
-                                spawned_giant_rattlesnake_scores.insert(score_tier_to_check);
+                                spawned_deadly_hornet_scores.insert(score_tier_to_check);
                             }
                             score_tier_to_check += 5;
                         }
@@ -5167,8 +5167,8 @@ fn main() {
                                                     CpuVariant::Rattlesnake => {
                                                         DeathType::Rattlesnake
                                                     }
-                                                    CpuVariant::GiantRattlesnake => {
-                                                        DeathType::GiantRattlesnake
+                                                    CpuVariant::DeadlyHornet => {
+                                                        DeathType::DeadlyHornet
                                                     }
                                                     CpuVariant::Raptor => DeathType::Raptor,
                                                     CpuVariant::TRex => DeathType::TRex,
@@ -5275,7 +5275,7 @@ fn main() {
                                     let score_value = match cpu_entity.variant {
                                         CpuVariant::GiantMantis => 3,
                                         CpuVariant::Rattlesnake => 1,
-                                        CpuVariant::GiantRattlesnake => 3,
+                                        CpuVariant::DeadlyHornet => 3,
                                         CpuVariant::Raptor => 2,
                                         CpuVariant::TRex => 5,
                                         CpuVariant::BloodIdol => 3,
@@ -6637,7 +6637,7 @@ fn main() {
                                     CpuVariant::GiantMantis => &mantis_cpu_textures,
                                     CpuVariant::BloodIdol => &blood_idol_cpu_textures,
                                     CpuVariant::Rattlesnake => &rattlesnake_cpu_textures,
-                                    CpuVariant::GiantRattlesnake => &giant_rattlesnake_cpu_textures,
+                                    CpuVariant::DeadlyHornet => &deadly_hornet_cpu_textures,
                                     CpuVariant::Raptor => &raptor_cpu_textures,
                                     CpuVariant::TRex => &t_rex_cpu_textures,
                                     CpuVariant::VoidTempest => &void_tempest_cpu_textures,
@@ -7849,7 +7849,7 @@ fn main() {
                                             CpuVariant::GiantMantis => "GIANT MANTIS",
                                             CpuVariant::BloodIdol => "BLOOD IDOL",
                                             CpuVariant::Rattlesnake => "RATTLESNAKE",
-                                            CpuVariant::GiantRattlesnake => "GIANT RATTLESNAKE",
+                                            CpuVariant::DeadlyHornet => "DEADLY HORNET",
                                             CpuVariant::Raptor => "RAPTOR",
                                             CpuVariant::TRex => "T-REX",
                                             CpuVariant::VoidTempest => "VOID TEMPEST",
@@ -9624,9 +9624,8 @@ fn main() {
 									
                                     chatbox.add_interaction(vec![
 										("DUE TO THE HOSTILE WILDLIFE, THE RACE 
-										IS POSTPONED. ANY RACERS THAT SHOW UP 
-										BEFORE ARE TO CLEAR THE TRACK OF ALL 
-										THREATS. THANKS!", MessageType::Info)
+										IS POSTPONED. PLEASE HELP CLEAR THE 
+										TRACK OF ALL THREATS.", MessageType::Info)
 									]);
 									
                                     racetrack_info_post_interacted = true;
@@ -9761,20 +9760,20 @@ fn main() {
                                                     }
                                                 }
 
-                                                // Spawn Giant Rattlesnakes based on score
+                                                // Spawn DEADLY HORNETs based on score
                                                 let current_score = fighter.score;
                                                 let mut score_tier = 5;
                                                 while score_tier <= current_score {
-                                                    if spawned_giant_rattlesnake_scores
+                                                    if spawned_deadly_hornet_scores
                                                         .contains(&score_tier)
                                                     {
                                                         if cpu_entities.len() < 10 {
                                                             cpu_entities.push(
-                                                                CpuEntity::new_giant_rattlesnake(
+                                                                CpuEntity::new_deadly_hornet(
                                                                     line_y,
                                                                 ),
                                                             );
-                                                            println!("Respawned Giant Rattlesnake for score tier {}", score_tier);
+                                                            println!("Respawned DEADLY HORNET for score tier {}", score_tier);
                                                             break; // Only spawn one
                                                         }
                                                     }
@@ -10273,7 +10272,7 @@ fn main() {
                             DeathType::Meteorite => "OBLITERATED BY METEORITE",
                             DeathType::GiantMantis => "EATEN BY GIANT MANTIS",
                             DeathType::Rattlesnake => "BITTEN BY RATTLESNAKE",
-                            DeathType::GiantRattlesnake => "SWALLOWED WHOLE BY GIANT RATTLESNAKE",
+                            DeathType::DeadlyHornet => "STUNG BY DEADLY HORNET",
                             DeathType::BloodIdol => "TORN APART BY BLOOD IDOL",
                             DeathType::VoidTempest => "ANNIHILATED BY VOID TEMPEST",
                             DeathType::Raptor => "MAULED BY A RAPTOR",
@@ -10605,23 +10604,23 @@ fn main() {
                         }
                     }
 
-                    // Respawn Giant Rattlesnakes based on score
+                    // Respawn DEADLY HORNETs based on score
                     if CPU_ENABLED {
                         let current_score = fighter.score;
                         let mut score_tier = 5;
                         while score_tier <= current_score {
-                            if spawned_giant_rattlesnake_scores.contains(&score_tier) {
-                                let giant_rattlesnake_exists = cpu_entities
+                            if spawned_deadly_hornet_scores.contains(&score_tier) {
+                                let deadly_hornet_exists = cpu_entities
                                     .iter()
-                                    .any(|e| e.variant == CpuVariant::GiantRattlesnake);
-                                if !giant_rattlesnake_exists && cpu_entities.len() < 10 {
-                                    let mut cpu = CpuEntity::new_giant_rattlesnake(line_y);
+                                    .any(|e| e.variant == CpuVariant::DeadlyHornet);
+                                if !deadly_hornet_exists && cpu_entities.len() < 10 {
+                                    let mut cpu = CpuEntity::new_deadly_hornet(line_y);
                                     cpu.max_hp *= aptitude;
                                     cpu.current_hp = cpu.max_hp;
                                     cpu.damage_value *= aptitude;
                                     cpu.speed *= 1.0 + (aptitude - 1.0) * 0.2;
                                     cpu_entities.push(cpu);
-                                    println!("Respawned Giant Rattlesnake after party wipe for score tier {}", score_tier);
+                                    println!("Respawned DEADLY HORNET after party wipe for score tier {}", score_tier);
                                     break; // Only spawn one
                                 }
                             }
@@ -11054,7 +11053,7 @@ fn main() {
                             DeathType::Meteorite => "WAS OBLITERATED BY METEORITE",
                             DeathType::GiantMantis => "WAS EATEN BY GIANT MANTIS",
                             DeathType::Rattlesnake => "WAS BITTEN BY RATTLESNAKE",
-                            DeathType::GiantRattlesnake => "WAS SWALLOWED WHOLE BY GIANT RATTLESNAKE",
+                            DeathType::DeadlyHornet => "WAS STUNG BY DEADLY HORNET",
                             DeathType::BloodIdol => "WAS TORN APART BY BLOOD IDOL",
                             DeathType::VoidTempest => "WAS ANNIHILATED BY VOID TEMPEST",
                             DeathType::Raptor => "WAS MAULED BY A RAPTOR",

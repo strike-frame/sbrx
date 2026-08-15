@@ -18,7 +18,7 @@ pub struct TaskSystem {
     pub open: bool,
     pub giant_mantis_defeated: u32,
     pub rattlesnake_defeated: u32,
-    pub giant_rattlesnake_defeated: u32,
+    pub deadly_hornet_defeated: u32,
     pub raptor_nest_cleared: bool,
     pub raptor_defeated: u32,
     pub t_rex_defeated: u32,
@@ -45,7 +45,7 @@ impl TaskSystem {
             open: false,
             giant_mantis_defeated: 0,
             rattlesnake_defeated: 0,
-            giant_rattlesnake_defeated: 0,
+            deadly_hornet_defeated: 0,
             raptor_nest_cleared: false,
             raptor_defeated: 0,
             t_rex_defeated: 0,
@@ -68,7 +68,7 @@ impl TaskSystem {
     pub fn populate_taskbar1(&mut self) {
         self.add_task("DEFEAT 3 GIANT MANTIS");
         self.add_task("DEFEAT 25 RATTLESNAKE");
-        self.add_task("DEFEAT 5 GIANT RATTLESNAKE");
+        self.add_task("DEFEAT 5 DEADLY HORNET");
     }
 
     pub fn populate_taskbar2(&mut self) {
@@ -99,7 +99,7 @@ impl TaskSystem {
         match variant {
             CpuVariant::GiantMantis => self.giant_mantis_defeated += 1,
             CpuVariant::Rattlesnake => self.rattlesnake_defeated += 1,
-            CpuVariant::GiantRattlesnake => self.giant_rattlesnake_defeated += 1,
+            CpuVariant::DeadlyHornet => self.deadly_hornet_defeated += 1,
             CpuVariant::Raptor => self.raptor_defeated += 1,
             CpuVariant::TRex => self.t_rex_defeated += 1,
             CpuVariant::BloodIdol => self.blood_idol_defeated += 1,
@@ -195,8 +195,8 @@ impl TaskSystem {
                         task_was_completed = true;
                     }
                 }
-                "DEFEAT 5 GIANT RATTLESNAKE" => {
-                    if self.giant_rattlesnake_defeated >= 5 {
+                "DEFEAT 5 DEADLY HORNET" => {
+                    if self.deadly_hornet_defeated >= 5 {
                         task.completed = true;
                         task_was_completed = true;
                     }
