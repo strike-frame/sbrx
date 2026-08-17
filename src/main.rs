@@ -4971,7 +4971,7 @@ fn main() {
                     }
                     if CPU_ENABLED && !racetrack_active {
                         let current_score = fighter.score;
-                        let mut score_tier_to_check = 5;
+                        let mut score_tier_to_check = 10;
                         while score_tier_to_check <= current_score {
                             if !spawned_deadly_hornet_scores.contains(&score_tier_to_check) {
                                 // Do not spawn score-based DEADLY HORNETs in certain areas.
@@ -4983,7 +4983,8 @@ fn main() {
                                         "Spawning DEADLY HORNET for score tier {}.",
                                         score_tier_to_check
                                     );
-                                    if cpu_entities.len() < 10 {
+                                    let active_hornets = cpu_entities.iter().filter(|e| e.variant == CpuVariant::DeadlyHornet && !e.is_dead()).count();
+                                    if cpu_entities.len() < 10 && active_hornets < 2 {
                                         let mut cpu = CpuEntity::new_deadly_hornet(line_y);
                                         let aptitude = get_field_aptitude(sbrx_map_system.current_field_id);
                                         cpu.max_hp *= aptitude;
@@ -4995,7 +4996,7 @@ fn main() {
                                 }
                                 spawned_deadly_hornet_scores.insert(score_tier_to_check);
                             }
-                            score_tier_to_check += 5;
+                            score_tier_to_check += 10;
                         }
                         let next_blood_idol_spawn_score = 0;
 						/*
@@ -5378,6 +5379,7 @@ fn main() {
                                         | CpuVariant::VoidTempest
                                         | CpuVariant::LightReaver
                                         | CpuVariant::NightReaver
+										| CpuVariant::DeadlyHornet
                                         | CpuVariant::RazorFiend => {
                                             cpus_to_remove.push(index);
                                             if cpu_entity.variant == CpuVariant::RazorFiend {
@@ -9762,7 +9764,7 @@ fn main() {
 
                                                 // Spawn DEADLY HORNETs based on score
                                                 let current_score = fighter.score;
-                                                let mut score_tier = 5;
+                                                let mut score_tier = 10;
                                                 while score_tier <= current_score {
                                                     if spawned_deadly_hornet_scores
                                                         .contains(&score_tier)
@@ -9777,7 +9779,7 @@ fn main() {
                                                             break; // Only spawn one
                                                         }
                                                     }
-                                                    score_tier += 5;
+                                                    score_tier += 10;
                                                 }
                                             }
                                         }
@@ -10607,7 +10609,7 @@ fn main() {
                     // Respawn DEADLY HORNETs based on score
                     if CPU_ENABLED {
                         let current_score = fighter.score;
-                        let mut score_tier = 5;
+                        let mut score_tier = 10;
                         while score_tier <= current_score {
                             if spawned_deadly_hornet_scores.contains(&score_tier) {
                                 let deadly_hornet_exists = cpu_entities
@@ -10624,7 +10626,7 @@ fn main() {
                                     break; // Only spawn one
                                 }
                             }
-                            score_tier += 5;
+                            score_tier += 10;
                         }
                     }
 

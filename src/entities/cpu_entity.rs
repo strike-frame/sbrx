@@ -95,8 +95,8 @@ impl CpuEntity {
     // Default constructor for GiantMantis
     pub fn new_giant_mantis(line_y: f64) -> Self {
         Self {
-            x: safe_gen_range(50.0, 1870.0, "CpuEntity x (GiantMantis)"),
-            y: safe_gen_range(line_y, line_y + 400.0, "CpuEntity y (GiantMantis)"),
+			x: safe_gen_range(50.0, 4950.0, "CpuEntity x (GiantMantis)"),
+			y: safe_gen_range(line_y + 50.0, 3200.0, "CpuEntity y (GiantMantis)"),
             speed: 150.0,
             size: 100.0,
             facing_left: false,
@@ -218,8 +218,8 @@ impl CpuEntity {
     // Constructor for BloodIdol
     pub fn new_blood_idol(line_y: f64, _base_mantis_hp: f64, _base_mantis_speed: f64) -> Self {
         Self {
-            x: safe_gen_range(50.0, 1870.0, "CpuEntity x (BloodIdol)"),
-            y: safe_gen_range(line_y, line_y + 400.0, "CpuEntity y (BloodIdol)"),
+            x: safe_gen_range(50.0, 4950.0, "CpuEntity x (BloodIdol)"),
+            y: safe_gen_range(line_y + 50.0, 3200.0, "CpuEntity y (BloodIdol)"),
             speed: 450.0,
             size: 50.0,
             facing_left: false,
@@ -247,8 +247,8 @@ impl CpuEntity {
     // Constructor for Rattlesnake
     pub fn new_rattlesnake(line_y: f64) -> Self {
         Self {
-            x: safe_gen_range(50.0, 1870.0, "CpuEntity x (Rattlesnake)"),
-            y: safe_gen_range(line_y, line_y + 400.0, "CpuEntity y (Rattlesnake)"),
+            x: safe_gen_range(50.0, 4950.0, "CpuEntity x (Rattlesnake)"),
+            y: safe_gen_range(line_y + 50.0, 3200.0, "CpuEntity y (Rattlesnake)"),
             speed: 125.0,
             size: 10.0,
             facing_left: false,
@@ -276,8 +276,8 @@ impl CpuEntity {
     // Constructor for DeadlyHornet
     pub fn new_deadly_hornet(line_y: f64) -> Self {
         Self {
-            x: safe_gen_range(50.0, 1870.0, "CpuEntity x (DeadlyHornet)"),
-            y: safe_gen_range(line_y, line_y + 400.0, "CpuEntity y (DeadlyHornet)"),
+            x: safe_gen_range(50.0, 4950.0, "CpuEntity x (DeadlyHornet)"),
+            y: safe_gen_range(line_y + 50.0, 3200.0, "CpuEntity y (DeadlyHornet)"),
             speed: 185.0,
             size: 50.0, // Assuming slightly larger size, can be adjusted
             facing_left: false,
@@ -365,8 +365,8 @@ impl CpuEntity {
         let mut skill_manager = SkillManager::new(); // add skill 1/3
         skill_manager.add_skill(SkillType::FlickerStrike); // add skill 2/3
         Self {
-            x: safe_gen_range(50.0, 1870.0, "CpuEntity x (VoidTempest)"),
-            y: safe_gen_range(line_y, line_y + 400.0, "CpuEntity y (VoidTempest)"),
+            x: safe_gen_range(50.0, 4950.0, "CpuEntity x (VoidTempest)"),
+            y: safe_gen_range(line_y + 50.0, 3200.0, "CpuEntity y (VoidTempest)"),
             speed: 450.0,
             size: 100.0,
             facing_left: false,
