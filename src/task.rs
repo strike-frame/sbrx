@@ -229,13 +229,10 @@ impl TaskSystem {
                         task_was_completed = true;
                     }
                 }
-                "FIND 10 SURVIVORS" => {
+                "GATHER 10 FALLEN SOLDIER DOG TAGS" => {
                     if self.survivors_found >= 10 {
                         task.completed = true;
                         task_was_completed = true;
-                        // Mark tasks to add after the loop
-                        tasks_to_add.push("BOARD THE FIGHTERJET");
-                        tasks_to_add.push("FLY TO FORT SILO [X-25 Y25]");
                     }
                 }
                 "BOARD THE FIGHTERJET" => {
@@ -285,6 +282,14 @@ impl TaskSystem {
                 completed_this_frame += 1;
             }
         }
+        if self.survivors_found >= 10 {
+            if !self.has_task("BOARD THE FIGHTERJET") {
+                tasks_to_add.push("BOARD THE FIGHTERJET");
+            }
+            if !self.has_task("FLY TO FORT SILO [X-25 Y25]") {
+                tasks_to_add.push("FLY TO FORT SILO [X-25 Y25]");
+            }
+        }		
         // Add new tasks outside the iterator loop to avoid borrowing conflicts
         for task_desc in tasks_to_add {
             if !self.has_task(task_desc) {

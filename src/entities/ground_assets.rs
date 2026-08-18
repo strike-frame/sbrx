@@ -156,6 +156,7 @@ impl GroundAssetManager {
         let mut exclusion_zones = HashSet::new();
         exclusion_zones.insert(SbrxFieldId(0, 0));
         exclusion_zones.insert(SbrxFieldId(-2, 5));
+		exclusion_zones.insert(SbrxFieldId(-25, 25));
 
         Self {
             assets,

@@ -86,6 +86,7 @@ pub struct CpuEntity {
     pub variant: CpuVariant, // To distinguish CPU types for textures/stats
     pub damage_display_cooldown: f64,
     pub stun_timer: f64,
+	pub skill_animation_timer: f64,
     pub bleed_effect: Option<BleedEffect>,
     pub skill_manager: SkillManager,
 	pub entity_state: EntityState,
@@ -115,6 +116,7 @@ impl CpuEntity {
             variant: CpuVariant::GiantMantis,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager: SkillManager::new(),
 			entity_state: EntityState::Hostile,
@@ -147,6 +149,7 @@ impl CpuEntity {
             variant: CpuVariant::RazorFiend,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager,
 			entity_state: EntityState::Hostile,
@@ -178,6 +181,7 @@ impl CpuEntity {
             variant: CpuVariant::LightReaver,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager,
 			entity_state: EntityState::Hostile,
@@ -209,6 +213,7 @@ impl CpuEntity {
             variant: CpuVariant::NightReaver,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager,
 			entity_state: EntityState::Hostile,
@@ -238,6 +243,7 @@ impl CpuEntity {
             variant: CpuVariant::BloodIdol,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager: SkillManager::new(),
 			entity_state: EntityState::Hostile,
@@ -267,6 +273,7 @@ impl CpuEntity {
             variant: CpuVariant::Rattlesnake,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager: SkillManager::new(),
 			entity_state: EntityState::Hostile,
@@ -296,6 +303,7 @@ impl CpuEntity {
             variant: CpuVariant::DeadlyHornet,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager: SkillManager::new(),
 			entity_state: EntityState::Hostile,
@@ -325,6 +333,7 @@ impl CpuEntity {
             variant: CpuVariant::Raptor,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager: SkillManager::new(),
 			entity_state: EntityState::Hostile,
@@ -354,6 +363,7 @@ impl CpuEntity {
             variant: CpuVariant::TRex,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager: SkillManager::new(),
 			entity_state: EntityState::Hostile,
@@ -385,6 +395,7 @@ impl CpuEntity {
             variant: CpuVariant::VoidTempest,
             damage_display_cooldown: 0.0,
             stun_timer: 0.0,
+			skill_animation_timer: 0.0,
             bleed_effect: None,
             skill_manager, // add skill 3/3
 			entity_state: EntityState::Hostile,
@@ -519,6 +530,10 @@ impl CpuEntity {
                 }
             }
         }
+		
+        if self.skill_animation_timer > 0.0 {
+            self.skill_animation_timer -= dt;
+        }		
 
         self.skill_manager.update(dt);
 
@@ -640,6 +655,8 @@ impl CpuEntity {
             // Shoot if player is within range (e.g., 600) but not too close (e.g., 100)
             if distance <= 600.0 && distance >= 100.0 {
                 self.skill_manager.trigger_skill(SkillType::PulseOrb);
+                self.skill_animation_timer = 0.3;
+                self.facing_left = dx < 0.0;				
                 return CpuUpdateResult {
                     damage_to_player: None,
                     visual_effect: Some(VisualEffect::ShootPulseOrb {
@@ -689,7 +706,9 @@ impl CpuEntity {
             return;
         }
 
-        let current_texture_index = if self.is_attacking {
+        let current_texture_index = if self.skill_animation_timer > 0.0 {
+            1.min(textures.len() - 1)
+        } else if self.is_attacking {
             (self.attack_frame + 1).min(textures.len() - 1)
         } else {
             0
@@ -795,7 +814,8 @@ impl CpuEntity {
         is_blocking: bool,
         _audio_manager: &AudioManager,
     ) -> bool {
-        if !CPU_ENABLED || self.entity_state == EntityState::Friendly {
+        if !CPU_ENABLED || self.entity_state == EntityState::Friendly || self.stun_timer > 0.0 || self.current_hp <= 0.0 {
+            self.is_attacking = false;
             return false;
         }
 

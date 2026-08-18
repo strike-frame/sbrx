@@ -228,7 +228,7 @@ impl BlockSystem {
         audio_manager: &AudioManager,
         current_time: f64,
     ) -> bool {
-        if !self.active || self.block_broken || self.block_fatigue {
+        if !self.active || self.block_broken || self.block_fatigue || cpu_entity.stun_timer > 0.0 || cpu_entity.current_hp <= 0.0 {
             // Cannot process if not active or already broken/fatigued
             return false;
         }

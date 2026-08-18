@@ -483,6 +483,7 @@ pub struct Game {
     saucer_projectiles: Vec<SaucerProjectile>,
     boss_fight_active: bool,
 	fort_silo_landed: bool,
+	grand_commander_spoken_to: bool,
 	pub death_cause: Option<FirmamentDeathCause>,
 	warnings: VecDeque<(String, f64)>,
 	pub task_bar_open: bool,
@@ -519,7 +520,7 @@ impl Game {
 	
     /// Creates a new game instance.
     /// Requires a mutable reference to a PistonWindow for asset loading and context.
-    pub fn new(window: &mut PistonWindow, start_field_id_override: Option<FieldId3D>, boss_already_defeated: bool, fort_silo_already_landed: bool) -> Result<Self, String> {
+    pub fn new(window: &mut PistonWindow, start_field_id_override: Option<FieldId3D>, boss_already_defeated: bool, fort_silo_already_landed: bool, grand_commander_spoken_to: bool) -> Result<Self, String> {
         debug_print("Initializing game library...");
         let assets = Assets::load(window)?;
 //
@@ -593,6 +594,7 @@ impl Game {
             saucer_projectiles: Vec::new(),
             boss_fight_active: boss_already_defeated,
 			fort_silo_landed: fort_silo_already_landed,
+			grand_commander_spoken_to,
 			death_cause: None,
 			warnings: VecDeque::new(),
 			task_bar_open: false,
@@ -1602,7 +1604,7 @@ impl Game {
                 piston_window::clear([0.0, 0.0, 0.05, 1.0], g);
             }
 		} else if self.map_system.current_field_id == map_system::FieldId3D(0, 0, 0) {
-            let tex_name = if self.fort_silo_landed { "racetrack0_air2" } else { "racetrack0_air" };
+            let tex_name = if self.grand_commander_spoken_to { "racetrack0_air2" } else { "racetrack0_air" };
             if let Some(bg_texture) = self.assets.get_texture(tex_name) {
                let transform = c.transform.scale(
                    WINDOW_WIDTH / bg_texture.get_width() as f64,
@@ -1613,7 +1615,7 @@ impl Game {
 				piston_window::clear(field_color, g);
            }
         } else if self.map_system.current_field_id == map_system::FieldId3D(-25, 25, 0) {
-            let tex_name = if self.fort_silo_landed { "fort_silo_air2" } else { "fort_silo_air" };
+            let tex_name = if self.grand_commander_spoken_to { "fort_silo_air2" } else { "fort_silo_air" };
             if let Some(bg_texture) = self.assets.get_texture(tex_name) {
                 let transform = c.transform.scale(
                    WINDOW_WIDTH / bg_texture.get_width() as f64,

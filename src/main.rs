@@ -256,6 +256,8 @@ struct Survivor {
 	is_rescued: bool,
 }
 
+//FIELD APTITUDE
+
 /// Calculates difficulty/reward multiplier based on distance from Field(0,0)
 fn get_field_aptitude(field: SbrxFieldId) -> f64 {
     let dist = field.0.abs().max(field.1.abs());
@@ -263,7 +265,7 @@ fn get_field_aptitude(field: SbrxFieldId) -> f64 {
         1.0 // Center 3x3 grid (Racetrack + immediate neighbors)
     } else {
         // Increases by 0.05 for every "ring" past the first
-        1.0 + (dist - 1) as f64 * 0.05
+        1.0 + (dist - 1) as f64 * 0.02 // was 5 
     }
 }
 
@@ -870,7 +872,7 @@ fn main() {
         new_cpu
     }
 
-    println!("Initializing sbrx0.2.22 game with line_y = {}", line_y);
+    println!("Initializing sbrx0.2.30 game with line_y = {}", line_y);
 
  	let exe_path = match env::current_exe() {
  	    Ok(path) => path,
@@ -914,7 +916,7 @@ fn main() {
  	        });
     window.set_position([0, 0]);
 	window.window.window.set_cursor_visible(false);
-    println!("sbrx0.2.22 Window created.");
+    println!("sbrx0.2.30 Window created.");
 
     let sbrx_assets_path = find_assets_folder(&exe_dir);
     let mut texture_context = window.create_texture_context();
@@ -1335,6 +1337,13 @@ fn main() {
  	    &texture_settings,
  	    "grand_commander",
  	);
+	
+    let fallen_soldier_texture = load_texture_or_exit(
+        &mut texture_context,
+        &sbrx_assets_path.join("fallen_soldier.png"),
+        &texture_settings,
+        "fallen_soldier",
+    );	
 
     let fighter_jet_texture_path = sbrx_assets_path.join("vehicle/fighter_jet.png");
 	let fighter_jet_texture = load_texture_or_exit(
@@ -1653,7 +1662,7 @@ fn main() {
 
     let mut firmament_load_requested = false; // New flag to control the loading sequence
 
-    println!("sbrx0.2.22 Starting game loop...");
+    println!("sbrx0.2.30 Starting game loop...");
     while let Some(e) = window.next() {
         // Track key and mouse input globally
         if let Some(Button::Keyboard(key)) = e.press_args() {
@@ -1700,6 +1709,7 @@ fn main() {
                 Some(firmament_target_field_id),
                 firmament_boss_defeated,
 				task_system.is_task_complete("LAND ON FORT SILO"),
+				task_system.is_task_complete("SPEAK TO THE GRAND COMMANDER"),
             ) {
                 Ok(mut firmament_game_instance) => {
                     firmament_game_instance.task_bar_open = task_system.open;
@@ -2054,7 +2064,7 @@ fn main() {
                     fighter_jet_world_y = DEFAULT_FIGHTER_JET_WORLD_Y;
                     next_firmament_entry_field_id = firmament_lib::FieldId3D(-2, 5, 0);
                     crashed_fighter_jet_sites.clear();
-                    println!("Transitioning to sbrx0.2.22 Playing state.");
+                    println!("Transitioning to sbrx0.2.30 Playing state.");
                     has_blood_idol_fog_spawned_once = false;
                     check_and_display_demonic_presence(
                         &sbrx_map_system.current_field_id,
@@ -2076,7 +2086,7 @@ fn main() {
                         );
 
                         // Draw Version Number
-                        let version_text = "v0 . 2 . 22";
+                        let version_text = "v0 . 2 . 30";
                         let font_size = 20;
                         let text_color = [0.0, 1.0, 0.0, 1.0]; // GrEEN
                         let text_x = 10.0;
@@ -3163,7 +3173,7 @@ fn main() {
                         lvl_up_state = LvlUpState::None;
                     }
 
-                    // Spawn VoidTempest when all survivors are found
+                    // Spawn VoidTempest when all fallen soldier dog tags are gathered
                     if task_system.survivors_found >= 10
                         && !void_tempest_spawned_for_survivors
                         && sbrx_map_system.current_field_id == SbrxFieldId(-2, 5)
@@ -3343,6 +3353,12 @@ fn main() {
                     if sbrx_map_system.current_field_id == SbrxFieldId(-2, 5) 
                         || sbrx_map_system.current_field_id == SbrxFieldId(-25, 25) {
                         task_system.mark_rocketbay_found();
+                    }		
+
+                    if sbrx_map_system.current_field_id == SbrxFieldId(-2, 5) {
+                        if !task_system.has_task("GATHER 10 FALLEN SOLDIER DOG TAGS") {
+                            task_system.add_task("GATHER 10 FALLEN SOLDIER DOG TAGS");
+                        }
                     }					
 					
                     match ambient_track_state {
@@ -3793,8 +3809,8 @@ fn main() {
                                     }
 
                                     if sbrx_map_system.current_field_id == SbrxFieldId(-2, 5) {
-                                        if !task_system.has_task("FIND 10 SURVIVORS") {
-                                            task_system.add_task("FIND 10 SURVIVORS");
+                                        if !task_system.has_task("GATHER 10 FALLEN SOLDIER DOG TAGS") {
+                                            task_system.add_task("GATHER 10 FALLEN SOLDIER DOG TAGS");
                                         }
 
                                         let has_night_reavers = cpu_entities
@@ -3921,7 +3937,7 @@ fn main() {
                                             .any(|e| e.variant == CpuVariant::NightReaver);
                                         if (!has_light_reavers || !has_night_reavers) && CPU_ENABLED {
                                             println!("Spawning Reavers in Fort Silo field x-25 y25 (via field transition)");
-                                            for _ in 0..3 {
+                                            for _ in 0..1 {
                                                 if cpu_entities.len() < 10 {
                                                     let reaver_x = safe_gen_range(
                                                         MIN_X,
@@ -3941,7 +3957,7 @@ fn main() {
                                                     cpu_entities.push(reaver);
                                                 }
                                             }
-                                            for _ in 0..3 {
+                                            for _ in 0..1 {
                                                 if cpu_entities.len() < 10 {
                                                     let reaver_x = safe_gen_range(
                                                         MIN_X,
@@ -4135,7 +4151,7 @@ fn main() {
                         if (!has_light_reavers || !has_night_reavers) && CPU_ENABLED {
                             println!("Spawning Reavers in Fort Silo field x-25 y25");
 							let aptitude = get_field_aptitude(sbrx_map_system.current_field_id);
-                            for _ in 0..3 {
+                            for _ in 0..1 {
                                 if cpu_entities.len() < 10 {
                                     let reaver_x = safe_gen_range(MIN_X, MAX_X, "LightReaver x");
                                     let reaver_y = safe_gen_range(MIN_Y, MAX_Y, "LightReaver y");
@@ -4147,7 +4163,7 @@ fn main() {
 									cpu_entities.push(reaver);
                                 }
                             }
-                            for _ in 0..3 {
+                            for _ in 0..1 {
                                 if cpu_entities.len() < 10 {
                                     let reaver_x = safe_gen_range(MIN_X, MAX_X, "NightReaver x");
                                     let reaver_y = safe_gen_range(MIN_Y, MAX_Y, "NightReaver y");
@@ -4859,13 +4875,10 @@ fn main() {
                             let dy = fighter.y - sj.y;
                             let distance_to_fighter_jet = (dx * dx + dy * dy).sqrt();
                             if distance_to_fighter_jet <= FIGHTER_JET_INTERACTION_DISTANCE {
-                                let find_survivors_task_active =
-                                    task_system.has_task("FIND 10 SURVIVORS");
                                 let find_survivors_task_complete =
-                                    task_system.is_task_complete("FIND 10 SURVIVORS");
-
-                                if (!find_survivors_task_active || find_survivors_task_complete)
-                                    && !racetrack_active
+                                    task_system.is_task_complete("GATHER 10 FALLEN SOLDIER DOG TAGS");
+ 
+                                if find_survivors_task_complete && !racetrack_active
                                 {
                                     show_fighter_jet_prompt = true;
                                 }
@@ -4931,10 +4944,21 @@ fn main() {
                             && sbrx_map_system.current_field_id != SbrxFieldId(-25, 25)							
                             && !wave_manager.is_active()
                         {
-                            println!("sbrx Field changed to non-(0,0) field {:?}. Spawning 3 rattlesnakes.", sbrx_map_system.current_field_id);
+                            println!("sbrx Field changed to field {:?}. Spawning field enemies (Giant Mantis & Rattlesnakes).", sbrx_map_system.current_field_id);
 							let aptitude = get_field_aptitude(sbrx_map_system.current_field_id);
+							if CPU_ENABLED {
+								// Spawn Giant Mantis
+								for _ in 0..2 {
+									if cpu_entities.len() < 10 {
+										let mut mantis = CpuEntity::new_giant_mantis(line_y);
+										mantis.max_hp *= aptitude;
+										mantis.current_hp = mantis.max_hp;
+										mantis.damage_value *= aptitude;
+										mantis.speed *= 1.0 + (aptitude - 1.0) * 0.2;
+										cpu_entities.push(mantis);
+									}
+								}							
                             for _ in 0..3 {
-                                if CPU_ENABLED {
                                     if cpu_entities.len() < 10 {
                                         let mut snake = CpuEntity::new_rattlesnake(line_y);
                                         snake.max_hp *= aptitude;
@@ -5043,6 +5067,9 @@ fn main() {
                         let mut player_died_this_frame = false;
 
                         for cpu_entity in &mut cpu_entities {
+                            if cpu_entity.stun_timer > 0.0 || cpu_entity.is_dead() {
+                                continue;
+                            }							
                             if !player_died_this_frame
                                 && cpu_entity.check_collision(
                                     fighter.x,
@@ -6479,6 +6506,100 @@ fn main() {
                             if sbrx_map_system.current_field_id == SbrxFieldId(-2, 5) {
                                 image(&rocketbay_texture, tc.transform.trans(track.x, track.y), g);
                             }
+							
+                            // --- FIELD EDGES (BOUNDARY & TRANSITION INDICATORS) ---
+                            if current_area.is_none() {
+                                let curr_f = sbrx_map_system.current_field_id;
+                                let is_saucer_defeated = task_system.flying_saucer_defeated;
+                                let fort_silo_ground_res = !is_saucer_defeated && (fighter.state == RacerState::OnFoot || fighter.state == RacerState::OnBike);
+                                let is_in_rocketbay = curr_f == SbrxFieldId(-2, 5);
+                                let void_tempest_active = cpu_entities.iter().any(|e| e.variant == CpuVariant::VoidTempest && !e.is_dead());
+                                let rocketbay_lockdown = is_in_rocketbay && void_tempest_active;
+                                let is_in_nest_field = curr_f == SbrxFieldId(1, 0);
+                                let t_rex_lockdown = is_in_nest_field && t_rex_is_active;
+                                let allowed_fields = get_allowed_fields(soldier_has_joined, raptor_has_joined);
+ 
+                                let is_accessible = |target: SbrxFieldId| -> bool {
+                                    if (racetrack_active || endless_arena_mode_active) && curr_f == SbrxFieldId(0, 0) {
+                                        return false;
+                                    }
+                                    if rocketbay_lockdown || t_rex_lockdown {
+                                        return false;
+                                    }
+                                    if fort_silo_ground_res && target == SbrxFieldId(-25, 25) {
+                                        return false;
+                                    }
+                                    if racetrack_active || allowed_fields.is_empty() {
+                                        true
+                                    } else {
+                                        allowed_fields.contains(&target)
+                                    }
+                                };
+ 
+                                let edge_font_size = 14;
+                                let left_target = SbrxFieldId(curr_f.0 - 1, curr_f.1);
+                                let right_target = SbrxFieldId(curr_f.0 + 1, curr_f.1);
+                                let top_target = SbrxFieldId(curr_f.0, curr_f.1 + 1);
+                                let bottom_target = SbrxFieldId(curr_f.0, curr_f.1 - 1);
+ 
+                                let edges = [
+                                    // Left Edge (MIN_X)
+                                    (
+                                        [MIN_X, MIN_Y, MIN_X, MAX_Y],
+                                        format!("FLATLINE_FIELD[X{} Y{}]", left_target.0, left_target.1),
+                                        vec![(MIN_X + -240.0, 1000.0), (MIN_X + -240.0, 1800.0), (MIN_X + -240.0, 2600.0)],
+                                        is_accessible(left_target),
+                                    ),
+                                    // Right Edge (MAX_X)
+                                    (
+                                        [MAX_X, MIN_Y, MAX_X, MAX_Y],
+                                        format!("FLATLINE_FIELD[X{} Y{}]", right_target.0, right_target.1),
+                                        vec![(MAX_X - -10.0, 1000.0), (MAX_X - -10.0, 1800.0), (MAX_X - -10.0, 2600.0)],
+                                        is_accessible(right_target),
+                                    ),
+                                    // Top Edge (MIN_Y)
+                                    (
+                                        [MIN_X, MIN_Y, MAX_X, MIN_Y],
+                                        format!("FLATLINE_FIELD[X{} Y{}]", top_target.0, top_target.1),
+                                        vec![(500.0, MIN_Y - 10.0), (2500.0, MIN_Y - 10.0), (4200.0, MIN_Y - 10.0)],
+                                        is_accessible(top_target),
+                                    ),
+                                    // Bottom Edge (MAX_Y)
+                                    (
+                                        [MIN_X, MAX_Y, MAX_X, MAX_Y],
+                                        format!("FLATLINE_FIELD[X{} Y{}]", bottom_target.0, bottom_target.1),
+                                        vec![(500.0, MAX_Y + 25.0), (2500.0, MAX_Y + 25.0), (4200.0, MAX_Y + 25.0)],
+                                        is_accessible(bottom_target),
+                                    ),
+                                ];
+ 
+                                for (line_coords, label, text_positions, accessible) in &edges {
+                                    let line_color = if *accessible { [0.0, 1.0, 0.0, 0.25] } else { [1.0, 1.0, 1.0, 0.25] };
+                                    let text_color = if *accessible { [0.0, 1.0, 0.0, 0.50] } else { [1.0, 1.0, 1.0, 0.50] };
+ 
+                                    piston_window::line(
+                                        line_color,
+                                        2.0,
+                                        *line_coords,
+                                        tc.transform,
+                                        g,
+                                    );
+ 
+                                    for (tx, ty) in text_positions {
+                                        piston_window::text::Text::new_color(text_color, edge_font_size)
+                                            .draw(
+                                                label,
+                                                &mut glyphs,
+                                                &tc.draw_state,
+                                                tc.transform.trans(*tx, *ty),
+                                                g,
+                                            )
+                                            .ok();
+                                    }
+                                }
+                            }
+                            // --- END FIELD EDGES ---							
+							
 							/*
                             line(
                                 [0.0, 1.0, 0.0, 0.8], // green horizon_line color
@@ -6569,13 +6690,7 @@ fn main() {
                                                 survivor.y,
                                             )
                                         {
-                                            let texture = match survivor.fighter_type {
-                                                FighterType::Soldier => {
-                                                    &soldier_textures.block_break
-                                                }
-                                                FighterType::Racer => &racer_textures.block_break,
-                                                FighterType::Raptor => &raptor_textures.block_break,
-                                            };
+                                            let texture = &fallen_soldier_texture;
                                             let tex_w = texture.get_width() as f64;
                                             let tex_h = texture.get_height() as f64;
                                             let img_x = survivor.x - tex_w / 2.0;
@@ -9383,31 +9498,22 @@ fn main() {
 
                                                     match task_system.survivors_found {
                                                         0 => {
-                                                            // First survivor
+                                                            // First fallen soldier
                                                             chatbox.add_interaction(vec![
-															("-SURVIVOR-", MessageType::Info), 
-															("THE ROCKETBAY IS DONE FOR. HURRY, TAKE THIS 
-															FIGHTERJET PASSKEY. IT WILL GIVE YOU 
-															ACCESS TO THE ONE ON THE HANGAR ROOF. 
-															GET ANY SURVIRORS OVER TO FORT SILO.", MessageType::Dialogue),
+															("-SOLDIER-", MessageType::Info), 
+															("NO.. THEY'RE ALL GONE.. NO TIME
+															TO GRIEVE.. GATHER THEIR DOG TAGS 
+															AND THEN WE WILL TAKE THE FIGHTERJET															
+															OVER TO FORT SILO..", MessageType::Dialogue),
 															
-															("SURVIVOR DIES", MessageType::Notification), 
-															
-															("RECEIVED:", MessageType::Info), 
-															("[FIGHTERJET_PASSKEY]", MessageType::Dialogue),
+															("DOG TAGS COLLECTED", MessageType::Notification), 
 															]);
                                                         }
-                                                        //    9 => {
-                                                        // 10th survivor (0-indexed)
-                                                        //        chatbox.add_interaction(vec![("MessageType::Notification)]);
-                                                        //    }
                                                         _ => {
-                                                            // Survivors 2-9 (indices 1-8)
+                                                            // fallen soldiers 2-9 (indices 1-8)
                                                             chatbox.add_interaction(vec![
-																("-SURVIVOR-", MessageType::Info), 
-																("thanks..", MessageType::Dialogue), 
                                                                 (
-                                                                    "SURVIVOR RETREATS TO THE FIGHTERJET.",
+                                                                    "DOG TAGS COLLECTED",
                                                                     MessageType::Notification,
                                                                 ),
                                                             ]);
@@ -9417,9 +9523,7 @@ fn main() {
                                                     task_system.survivors_found += 1;
                                                     if task_system.survivors_found >= 10 {
                                                         chatbox.add_interaction(vec![
-														("-SURVIVOR-", MessageType::Info), 
-														("LOOK OUT!", MessageType::Dialogue), 
-														("SURVIVOR GETS INCINERATED BY ELECTRICITY", MessageType::Notification), 
+														("DOG TAGS COLLECTED", MessageType::Notification), 
 														("A MALEVOLENT PRESENCE APPEARS", MessageType::Notification)
 														]);
                                                     }
@@ -9472,7 +9576,7 @@ fn main() {
                                     chatbox.add_interaction(vec![
 									
 										("-GRAND COMMANDER-", MessageType::Info),  
-										("YOU ALL GOT HERE JUST IN TIME. WE MADE
+										("YOU GOT HERE JUST IN TIME. WE MADE
 										CONTACT WITH A HOSTILE ALIEN RACE AND
 										NOW WE'RE BEING EXTERMINATED!", MessageType::Dialogue),									
 																	   
@@ -9480,18 +9584,19 @@ fn main() {
 										("WHAT CAN WE DO?", MessageType::Dialogue),
 
 										("-GRAND COMMANDER-", MessageType::Info),  
-										("LIBERATE THE SOUTHEAST MISSILE RANGE. 
+										("WE GOTTA NUKE THE BASTARDS.
+										LIBERATE THE SOUTHEAST MISSILE RANGE. 
 										YOU'LL NEED TO FUEL UP THE FIGHTERJET 
 										FOR SUCH A DISTANCE. UNFORTUNATELY, OUR 
 										FUEL TANKS HAVE ALL BEEN DESTROYED.", MessageType::Dialogue),
 
 										("-SOLDIER-", MessageType::Info), 
-										("I SAW A FUEL STATION AT THE NEAR BY
-										SABERCROSS TRACK. IT SHOULD DO 
-										THE JOB.", MessageType::Dialogue),
+										("I SPOTTED A FUEL STATION AT THE 
+										NEARBY SABERCROSS TRACK. IT SHOULD 
+										DO THE JOB.", MessageType::Dialogue),
 
 										("-GRAND COMMANDER-", MessageType::Info), 
-										("GO AT ONCE! I WILL SEND YOU THE MISSILE  
+										("GO AT ONCE. I WILL SEND YOU THE MISSILE  
 										RANGE COORDINATES ONCE YOU FUEL UP.", MessageType::Dialogue),
 																											 							  
 									]);	
@@ -9540,10 +9645,10 @@ fn main() {
 
                                     chatbox.add_interaction(vec![
 										("-SURVIVOR-", MessageType::Info), 
-										("THE FIELD BARRIER DEACTIVATED AFTER YOU
-										SHOT DOWN THAT FLYING SUACER. WE'VE BEEN 
-										TRAPPED HERE. IF YOU'RE LOOKING FOR THE
-										THE GRAND COMMANDER, CHECK THE BUNKER.", MessageType::Dialogue), 
+										("YOU MUST HURRY! THEY BROUGHT FORTH A
+										FEARSOME CREATURE. IT BUSTED INTO THE 
+										BUNKER AND IS CAUSING HAVOC. PLEASE,
+										PROTECT THE GRAND COMMANDER AT ALL COSTS!", MessageType::Dialogue), 
 										("SURVIVOR DIES", MessageType::Notification),
 									]);
 									
@@ -11526,7 +11631,7 @@ fn main() {
                             println!("Spawning Light Reavers in Fort Silo field x-25 y25 (from Firmament landing)");
                             cpu_entities.clear(); // Clear any existing entities first
 							let aptitude = get_field_aptitude(target_sbrx_field_for_player);
-                            for _ in 0..2 {
+                            for _ in 0..1 {
                                 let reaver_x = safe_gen_range(MIN_X, MAX_X, "LightReaver x");
                                 let reaver_y = safe_gen_range(MIN_Y, MAX_Y, "LightReaver y");
                                 let mut reaver = CpuEntity::new_light_reaver(reaver_x, reaver_y);
@@ -11949,5 +12054,5 @@ fn main() {
 		text::Text::new_color(border_color, font_size).draw(rmb_text, glyphs, &c.draw_state, c.transform.trans(text_x, text_y), g).ok();
 	}	
 	
-    println!("sbrx0.2.22 Game loop ended.");
+    println!("sbrx0.2.30 Game loop ended.");
 }
