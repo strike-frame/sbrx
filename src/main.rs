@@ -9711,7 +9711,7 @@ fn main() {
 										("Grh..", MessageType::Dialogue),										
 										
 										("-SOLDIER-", MessageType::Info), 
-										("LOOKS LIKE THIS ONE STRAYED FROM IT'S PACK.
+										("LOOKS LIKE THIS ONE STRAYED FROM ITS PACK.
 										TOO BAD WE COULDN'T SAVE THE OTHERS.", MessageType::Dialogue),
 										
 										("THE RAPTOR GETS UP AND STARTS TO FOLLOW YOU.", MessageType::Notification),										
