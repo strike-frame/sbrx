@@ -782,9 +782,10 @@ fn handle_ambient_playlist(
     index: &mut usize,
 ) -> Option<String> {
     let playlist = [
-        "sdtrk1", "sdtrk2", "sdtrk3", "sdtrk4", "sdtrk5",
-        "sdtrk6", "sdtrk7", "sdtrk8", "sdtrk9", "sdtrk10",
-        "sdtrk11", "sdtrk12", "sdtrk13", "sdtrk14", "sdtrk15"
+        "demo_track0", "demo_track1", "demo_track2", "demo_track3", 
+		"AI_track1", "AI_track2", "AI_track3", "AI_track4", "AI_track5",
+        "AI_track6", "AI_track7", "AI_track8", "AI_track9", "AI_track10",
+        "AI_track11", "AI_track12", "AI_track13", "AI_track14", "AI_track15"
     ];	
 
     if bgm_sink.as_ref().map_or(true, |s| s.empty()) {
@@ -1868,21 +1869,25 @@ fn main() {
                             AmbientTrackState::Muted => {
                                 // Start the next track in the playlist
                                 let playlist = [
-								"sdtrk1", 
-								"sdtrk2", 
-								"sdtrk3", 
-								"sdtrk4", 
-								"sdtrk5",
-								"sdtrk6", 
-								"sdtrk7", 
-								"sdtrk8", 
-								"sdtrk9", 
-								"sdtrk10",
-								"sdtrk11", 
-								"sdtrk12", 
-								"sdtrk13", 
-								"sdtrk14", 
-								"sdtrk15"								
+								"demo_track0",
+								"demo_track1",
+								"demo_track2",
+								"demo_track3",
+								"AI_track1", 
+								"AI_track2", 
+								"AI_track3", 
+								"AI_track4", 
+								"AI_track5",
+								"AI_track6", 
+								"AI_track7", 
+								"AI_track8", 
+								"AI_track9", 
+								"AI_track10",
+								"AI_track11", 
+								"AI_track12", 
+								"AI_track13", 
+								"AI_track14", 
+								"AI_track15"								
 								];
                                 let track = playlist[ambient_playlist_index];
                                 if let Ok(sink) = audio_manager.play_sfx_with_sink(track) {
@@ -1919,21 +1924,25 @@ fn main() {
                             AmbientTrackState::Muted => {
                                 // Start the next track in the playlist
                                 let playlist = [
-								"sdtrk1", 
-								"sdtrk2", 
-								"sdtrk3", 
-								"sdtrk4", 
-								"sdtrk5",
-								"sdtrk6", 
-								"sdtrk7", 
-								"sdtrk8", 
-								"sdtrk9", 
-								"sdtrk10",
-								"sdtrk11", 
-								"sdtrk12", 
-								"sdtrk13", 
-								"sdtrk14", 
-								"sdtrk15"								
+								"demo_track0",
+								"demo_track1",
+								"demo_track2",
+								"demo_track3",
+								"AI_track1", 
+								"AI_track2", 
+								"AI_track3", 
+								"AI_track4", 
+								"AI_track5",
+								"AI_track6", 
+								"AI_track7", 
+								"AI_track8", 
+								"AI_track9", 
+								"AI_track10",
+								"AI_track11", 
+								"AI_track12", 
+								"AI_track13", 
+								"AI_track14", 
+								"AI_track15"								
 								];
                                 let track = playlist[ambient_playlist_index];
                                 if let Ok(sink) = audio_manager.play_sfx_with_sink(track) {
@@ -1951,9 +1960,10 @@ fn main() {
                         sink.stop();
                     }
                     let playlist = [
-                        "sdtrk1", "sdtrk2", "sdtrk3", "sdtrk4", "sdtrk5",
-                        "sdtrk6", "sdtrk7", "sdtrk8", "sdtrk9", "sdtrk10",
-                        "sdtrk11", "sdtrk12", "sdtrk13", "sdtrk14", "sdtrk15"
+                        "demo_track0", "demo_track1", "demo_track2", "demo_track3", 
+						"AI_track1", "AI_track2", "AI_track3", "AI_track4", "AI_track5",
+                        "AI_track6", "AI_track7", "AI_track8", "AI_track9", "AI_track10",
+                        "AI_track11", "AI_track12", "AI_track13", "AI_track14", "AI_track15"
                     ];
                     // Go back TWO tracks (one to get current, one more for previous)
                     // because index always points to the NEXT track to play
@@ -1986,9 +1996,10 @@ fn main() {
                         sink.stop();
                     }
                     let playlist = [
-                        "sdtrk1", "sdtrk2", "sdtrk3", "sdtrk4", "sdtrk5",
-                        "sdtrk6", "sdtrk7", "sdtrk8", "sdtrk9", "sdtrk10",
-                        "sdtrk11", "sdtrk12", "sdtrk13", "sdtrk14", "sdtrk15"
+                        "demo_track0", "demo_track1", "demo_track2", "demo_track3", 
+						"AI_track1", "AI_track2", "AI_track3", "AI_track4", "AI_track5",
+                        "AI_track6", "AI_track7", "AI_track8", "AI_track9", "AI_track10",
+                        "AI_track11", "AI_track12", "AI_track13", "AI_track14", "AI_track15"
                     ];
 					// Index already points to the next track, so just use it
                     let track = playlist[ambient_playlist_index];
@@ -5866,7 +5877,7 @@ fn main() {
 						
 						// Render track notification (bottom right)
 						if let Some(ref notif) = track_notification {
-							let text = format!("track: {}", notif.track_name);
+							let text = format!("{}", notif.track_name);
 							let font_size = 18;
 							let text_width = glyphs.width(font_size, &text).unwrap_or(150.0);
 							let padding = 8.0;
@@ -7118,7 +7129,7 @@ fn main() {
 						
                         // --- TRACK NOTIFICATION (bottom right) ---
                         if let Some(ref notif) = track_notification {
-                            let text = format!("track: {}", notif.track_name);
+                            let text = format!("{}", notif.track_name);
                             let font_size = 18;
                             let text_width = glyphs.width(font_size, &text).unwrap_or(150.0);
                             let padding = 8.0;
@@ -11527,7 +11538,7 @@ fn main() {
 
                         // --- TRACK NOTIFICATION (bottom right) - Firmament Mode ---
                         if let Some(ref notif) = track_notification {
-                            let text = format!("track: {}", notif.track_name);
+                            let text = format!("{}", notif.track_name);
                             let font_size = 18;
                             let text_width = glyphs.width(font_size, &text).unwrap_or(150.0);
                             let padding = 8.0;

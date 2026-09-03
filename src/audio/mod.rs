@@ -1,4 +1,4 @@
-// audio/mod.rs - FIXED FOR RODIO 0.21.1 OGG SUPPORT (v2)
+// audio/mod.rs 
 
 use rodio::{source::Source, Decoder, OutputStream, Sink};
 use rodio::mixer::Mixer;
@@ -152,21 +152,25 @@ impl AudioManager {
             ("mantis_attack", "SlashSwipe.wav"),
             ("slash_combo", "slashCombo.wav"),
             ("crickets", "crickets.ogg"),
-            ("sdtrk1", "background_tracks/sdtrk1.ogg"),
-            ("sdtrk2", "background_tracks/sdtrk2.ogg"),
-            ("sdtrk3", "background_tracks/sdtrk3.ogg"),
-            ("sdtrk4", "background_tracks/sdtrk4.ogg"),
-            ("sdtrk5", "background_tracks/sdtrk5.ogg"),
-            ("sdtrk6", "background_tracks/sdtrk6.ogg"),
-            ("sdtrk7", "background_tracks/sdtrk7.ogg"),
-            ("sdtrk8", "background_tracks/sdtrk8.ogg"),
-            ("sdtrk9", "background_tracks/sdtrk9.ogg"),
-            ("sdtrk10", "background_tracks/sdtrk10.ogg"),
-            ("sdtrk11", "background_tracks/sdtrk11.ogg"),
-            ("sdtrk12", "background_tracks/sdtrk12.ogg"),
-            ("sdtrk13", "background_tracks/sdtrk13.ogg"),
-            ("sdtrk14", "background_tracks/sdtrk14.ogg"),
-            ("sdtrk15", "background_tracks/sdtrk15.ogg"),
+			("demo_track0", "background_tracks/demo_track0.ogg"),
+			("demo_track1", "background_tracks/demo_track1.ogg"),
+			("demo_track2", "background_tracks/demo_track2.ogg"),
+			("demo_track3", "background_tracks/demo_track3.ogg"),
+            ("AI_track1", "background_tracks/AI_track1.ogg"),
+            ("AI_track2", "background_tracks/AI_track2.ogg"),
+            ("AI_track3", "background_tracks/AI_track3.ogg"),
+            ("AI_track4", "background_tracks/AI_track4.ogg"),
+            ("AI_track5", "background_tracks/AI_track5.ogg"),
+            ("AI_track6", "background_tracks/AI_track6.ogg"),
+            ("AI_track7", "background_tracks/AI_track7.ogg"),
+            ("AI_track8", "background_tracks/AI_track8.ogg"),
+            ("AI_track9", "background_tracks/AI_track9.ogg"),
+            ("AI_track10", "background_tracks/AI_track10.ogg"),
+            ("AI_track11", "background_tracks/AI_track11.ogg"),
+            ("AI_track12", "background_tracks/AI_track12.ogg"),
+            ("AI_track13", "background_tracks/AI_track13.ogg"),
+            ("AI_track14", "background_tracks/AI_track14.ogg"),
+            ("AI_track15", "background_tracks/AI_track15.ogg"),
         ];
 
         for (name, filename) in effects.iter() {
