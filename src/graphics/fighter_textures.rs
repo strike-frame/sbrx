@@ -45,6 +45,7 @@ pub struct FighterTextures {
     pub bike_slide_boost: Option<G2dTexture>,	
 	pub ranged_aim: Option<G2dTexture>,
 	pub bike_ranged_aim: Option<G2dTexture>,
+	pub finisher: Vec<G2dTexture>,
 }
 
 /// Helper function to load textures for a specific fighter type
@@ -191,6 +192,19 @@ pub fn load_fighter_textures(
     let bike_ranged_aim_path = assets.join(format!("player/{}/racer_onBike/rcrBikeRangedAim.png", fighter_type));
     let bike_ranged_aim = Texture::from_path(&mut window.create_texture_context(), &bike_ranged_aim_path, Flip::None, &TextureSettings::new()).ok();
 
+    let mut finisher_textures = Vec::new();
+    for i in 1..=2 {
+        let finisher_path = assets.join(format!("player/{}/finisher{}.png", fighter_type, i));
+        if let Ok(tex) = Texture::from_path(
+            &mut window.create_texture_context(),
+            &finisher_path,
+            Flip::None,
+            &TextureSettings::new(),
+        ) {
+            finisher_textures.push(tex);
+        }
+    }
+
     Ok(FighterTextures {
         idle: idle_texture,
         fwd: fwd_texture,
@@ -215,6 +229,7 @@ pub fn load_fighter_textures(
         bike_slide_boost,	
 		ranged_aim,
 		bike_ranged_aim,
+		finisher: finisher_textures,
     })
 }
 
